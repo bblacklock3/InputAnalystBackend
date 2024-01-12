@@ -1,0 +1,11 @@
+pymongo[srv]
+pynput
+datetime
+fastapi[all]
+python-dotenv
+isodate
+pywin32
+pywinauto
+sv_ttk
+pillow
+PyInstaller

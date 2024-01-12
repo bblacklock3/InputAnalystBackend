@@ -1,0 +1,8 @@
+# WSL host
+HOSTNAME = "172.27.149.188"
+# HOSTNAME = "localhost"
+PORT = 27017
+DATABASE = "InputAnalyst"
+KEYBOARD_COLLECTION = "keyboard"
+MOUSE_COLLECTION = "mouse"
+APPLICATION_COLLECTION = "application"
