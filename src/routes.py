@@ -37,6 +37,19 @@ def process_dates(start_date, end_date):
     return start_date, end_date
 
 
+def get_date_range(start_date, end_date):
+    start_date, end_date = process_dates(start_date, end_date)
+    start_list = [
+        start_date + timedelta(days=i)
+        for i in range((end_date - start_date).days + 1)
+    ]
+    end_list = [
+        start_date + timedelta(days=i + 1)
+        for i in range((end_date - start_date).days + 1)
+    ]
+    return start_list, end_list
+
+
 router = APIRouter()
 
 
@@ -44,14 +57,19 @@ router = APIRouter()
             response_description="Get the latest mouse data from the database",
             response_model=List[MouseInput])
 def get_mouse_data(request: Request,
-                   start_date: Optional[datetime] = Query(None, ),
+                   start_date: str | None = None,
                    end_date: str | None = None):
     start_date, end_date = process_dates(start_date, end_date)
     mouse_data = list(request.app.db["mouse"].find({
         "timestamp": {
             "$gt": start_date,
             "$lt": end_date
-        }
+        },
+        "$or": [{
+            "left_click": True
+        }, {
+            "right_click": True
+        }]
     }).sort("timestamp", -1))
     if not mouse_data:
         raise HTTPException(
@@ -157,3 +175,40 @@ def get_keyboard_data(request: Request,
     except StopIteration:
         keypresses = {"total": 0}
     return keypresses
+
+
+@router.get("/data-status/",
+            response_description="Gets the data status of each date")
+def get_data_status(request: Request,
+                    start_date: str | None = None,
+                    end_date: str | None = None):
+    print(start_date, end_date)
+    start_list, end_list = get_date_range(start_date, end_date)
+    print(start_list[0], end_list[0])
+    print(start_list[1], end_list[1])
+    data_status = []
+    for i in range(len(start_list)):
+        exists = request.app.db["mouse"].find_one(
+            {"timestamp": {
+                "$gt": start_list[i],
+                "$lt": end_list[i]
+            }})
+        status = "None"
+        summary = "None"
+        if exists is not None:
+            processed = request.app.db["dailySummary"].find_one(
+                {"timestamp": {
+                    "$gt": start_list[i],
+                    "$lt": end_list[i]
+                }})
+            if processed is not None:
+                status = "Processed"
+            else:
+                status = "Unprocessed"
+        data_status.append({
+            "date": start_list[i].strftime("%Y/%m/%d"),
+            "status": status,
+            "summary": summary
+        })
+    data_status.reverse()
+    return data_status

@@ -31,6 +31,18 @@ class ClickCount(BaseModel):
 class KeypressCount(BaseModel):
     total: int = Field(...)
     
+class DataStats(BaseModel):
+    mean: float = Field(...)
+    max: int = Field(...)
+    variance: float = Field(...)
+    
+class DailySummary(BaseModel):
+    date: datetime = Field(...)
+    click_count: int = Field(...)
+    keypress_count: int = Field(...)
+    mouse_1min: DataStats = Field(...)
+    keyboard_1min: DataStats = Field(...)
+    
 
 
 class Settings(BaseModel):
