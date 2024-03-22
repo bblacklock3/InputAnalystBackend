@@ -9,13 +9,13 @@ from input_logger import create_input_listeners, stop_input_listeners, close_exe
 
 
 def setSizeSmall():
-    root.minsize(720, 50)
-    root.maxsize(720, 50)
+    root.minsize(750, 50)
+    root.maxsize(750, 50)
 
 
 def setSizeLarge():
-    root.minsize(720, 350)
-    root.maxsize(720, 350)
+    root.minsize(750, 350)
+    root.maxsize(750, 350)
 
 
 def handleClose():

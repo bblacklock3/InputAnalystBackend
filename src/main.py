@@ -2,9 +2,12 @@ from webbrowser import get
 from fastapi import FastAPI
 from pymongo import MongoClient
 from contextlib import asynccontextmanager
-from routes import router
+from current_router import router
+
 from config import HOSTNAME, PORT, DATABASE
 from fastapi.middleware.cors import CORSMiddleware
+from routes.analysis import router as analysis_router
+from routes.data import router as data_router
 
 
 @asynccontextmanager
@@ -31,4 +34,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router, tags=["data"], prefix="/data")
+app.include_router(data_router, tags=["data"], prefix="/data")
+app.include_router(analysis_router, tags=["analysis"], prefix="/analysis")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="localhost", port=8000)

@@ -15,6 +15,7 @@ class MouseInput(BaseModel):
     y: int = Field(...)
     right_click: bool = Field(...)
     left_click: bool = Field(...)
+    middle_click: bool = Field(...)
     scroll: int = Field(...)
 
 
@@ -25,24 +26,42 @@ class ApplicationData(BaseModel):
 
 
 class ClickCount(BaseModel):
-    left_click: int = Field(...)
-    right_click: int = Field(...)
-    
+    right: int = Field(...)
+    left: int = Field(...)
+    middle: int = Field(...)
+    total: int = Field(...)
+
+
 class KeypressCount(BaseModel):
     total: int = Field(...)
-    
-class DataStats(BaseModel):
-    mean: float = Field(...)
+
+
+class Stats(BaseModel):
     max: int = Field(...)
-    variance: float = Field(...)
-    
+    mean: float = Field(...)
+    std: float = Field(...)
+    sum: int = Field(...)
+    active_time: int = Field(...)
+
+
+class WindowData(BaseModel):
+    size: int = Field(...)
+    mouse_stats: Stats = Field(...)
+    mouse_data: List[int] = Field(...)
+    keyboard_stats: Stats = Field(...)
+    keyboard_data: List[int] = Field(...)
+
+
 class DailySummary(BaseModel):
-    date: datetime = Field(...)
-    click_count: int = Field(...)
-    keypress_count: int = Field(...)
-    mouse_1min: DataStats = Field(...)
-    keyboard_1min: DataStats = Field(...)
-    
+    date: str = Field(...)
+    complete: bool = Field(...)
+    window_sizes: List[int] = Field(...)
+    inactive_limit: int = Field(...)
+    mouse_active: int = Field(...)
+    keyboard_active: int = Field(...)
+    total_active: int = Field(...)
+    time_data: List[datetime] = Field(...)
+    window_data: List[WindowData] = Field(...)
 
 
 class Settings(BaseModel):
@@ -52,3 +71,8 @@ class Settings(BaseModel):
     daily_typing_limit: int = Field(...)
     extra_typing_limit: Optional[Dict[str, int]] = None
     inactivity_limit: time = Field(...)
+
+
+class RecentData(BaseModel):
+    clicks: List[int] = Field(...)
+    keypresses: List[int] = Field(...)
